@@ -2,6 +2,8 @@
 import SwiftUI
 import UIKit
 
+class TextView: UITextView { }
+
 public struct HighlightedTextEditor: UIViewRepresentable, HighlightingTextEditor {
 
     @Binding var text: String {
@@ -10,6 +12,7 @@ public struct HighlightedTextEditor: UIViewRepresentable, HighlightingTextEditor
         }
     }
     let highlightRules: [HighlightRule]
+    let textView = TextView()
     
     var onEditingChanged                   : () -> Void                   = {}
     var onCommit                           : () -> Void                   = {}
@@ -44,7 +47,6 @@ public struct HighlightedTextEditor: UIViewRepresentable, HighlightingTextEditor
     }
     
     public func makeUIView(context: Context) -> UITextView {
-        let textView = UITextView()
         textView.delegate = context.coordinator
         textView.isEditable = true
         textView.isScrollEnabled = true
@@ -159,5 +161,18 @@ extension HighlightedTextEditor {
         new.textAlignment = alignment
         return new
     }
+    
+    public func undo() {
+        if ((textView.undoManager?.canUndo) != nil) {
+            textView.undoManager?.undo()
+        }
+    }
+    
+    public func redo() {
+        if ((textView.undoManager?.canRedo) != nil) {
+            textView.undoManager?.redo()
+        }
+    }
+
 }
 #endif
